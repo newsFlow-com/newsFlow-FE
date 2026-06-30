@@ -4,7 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
 
 export const apiClient = axios.create({ baseURL: API_URL })
 export const aiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_AI_URL ?? 'http://localhost:8081',
+  baseURL: process.env.NEXT_PUBLIC_AI_URL ?? 'http://localhost:8000',
 })
 
 const AUTH_STORE_KEY = 'newsflow-auth'
