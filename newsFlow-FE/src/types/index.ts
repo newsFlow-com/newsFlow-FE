@@ -72,6 +72,13 @@ export interface AuthTokens {
   refreshToken: string
 }
 
+export interface LoginResponse {
+  accessToken: string
+  refreshToken: string
+  gate: string
+  user: User
+}
+
 export interface PageResponse<T> {
   content: T[]
   totalElements: number

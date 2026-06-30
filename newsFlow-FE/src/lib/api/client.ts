@@ -34,7 +34,13 @@ if (typeof window !== 'undefined') {
   })
 
   apiClient.interceptors.response.use(
-    (res) => res,
+    (res) => {
+      // { success, data } 래퍼 자동 언래핑
+      if (res.data && typeof res.data === 'object' && 'success' in res.data) {
+        res.data = res.data.data
+      }
+      return res
+    },
     async (error) => {
       const original = error.config
       if (error.response?.status === 401 && !original._retry) {
@@ -46,8 +52,10 @@ if (typeof window !== 'undefined') {
         }
         try {
           const { data } = await axios.post(`${API_URL}/api/v1/auth/refresh`, { refreshToken })
-          updateStoredAccessToken(data.accessToken)
-          original.headers.Authorization = `Bearer ${data.accessToken}`
+          // API 래퍼 언래핑 후 accessToken 추출
+          const newToken = data.data?.accessToken ?? data.accessToken
+          updateStoredAccessToken(newToken)
+          original.headers.Authorization = `Bearer ${newToken}`
           return apiClient(original)
         } catch {
           localStorage.removeItem(AUTH_STORE_KEY)

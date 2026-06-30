@@ -22,9 +22,8 @@ export function useLogin() {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       authApi.login(email, password),
-    onSuccess: async (tokens) => {
-      const user = await authApi.me()
-      setAuth(user, tokens.accessToken, tokens.refreshToken)
+    onSuccess: (data) => {
+      setAuth(data.user, data.accessToken, data.refreshToken)
       router.push('/feed')
     },
   })

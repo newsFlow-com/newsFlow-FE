@@ -1,9 +1,9 @@
 import { apiClient } from './client'
-import type { AuthTokens, User } from '@/src/types'
+import type { AuthTokens, LoginResponse, User } from '@/src/types'
 
 export const authApi = {
   login: (email: string, password: string) =>
-    apiClient.post<AuthTokens>('/api/v1/auth/login', { email, password }).then((r) => r.data),
+    apiClient.post<LoginResponse>('/api/v1/auth/login', { email, password }).then((r) => r.data),
 
   signup: (email: string, password: string, nickname: string) =>
     apiClient.post('/api/v1/auth/signup', { email, password, nickname }),
