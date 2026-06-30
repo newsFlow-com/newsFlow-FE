@@ -3,10 +3,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { articlesApi } from '@/src/lib/api/articles'
 
-export function useArticles(page = 0, size = 20) {
+export function useArticles(page = 0, size = 20, sentiment?: string) {
   return useQuery({
-    queryKey: ['articles', page, size],
-    queryFn: () => articlesApi.list(page, size),
+    queryKey: ['articles', page, size, sentiment],
+    queryFn: () => articlesApi.list(page, size, sentiment),
   })
 }
 
