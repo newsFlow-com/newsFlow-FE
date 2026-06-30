@@ -28,6 +28,7 @@ export default function SignupPage() {
     register,
     handleSubmit,
     getValues,
+    trigger,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) })
 
@@ -35,6 +36,12 @@ export default function SignupPage() {
     mutationFn: () => authApi.checkEmail(getValues('email')),
     onSuccess: (data) => setEmailStatus(data.available ? 'available' : 'taken'),
   })
+
+  async function handleCheckEmail() {
+    const valid = await trigger('email')
+    if (!valid) return
+    checkEmail.mutate()
+  }
 
   function onSubmit(data: FormData) {
     if (emailStatus !== 'available') return
@@ -60,7 +67,7 @@ export default function SignupPage() {
             />
             <button
               type="button"
-              onClick={() => checkEmail.mutate()}
+              onClick={handleCheckEmail}
               disabled={checkEmail.isPending}
               className="shrink-0 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
