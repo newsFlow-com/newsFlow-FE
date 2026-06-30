@@ -5,6 +5,9 @@ export const authApi = {
   login: (email: string, password: string) =>
     apiClient.post<LoginResponse>('/api/v1/auth/login', { email, password }).then((r) => r.data),
 
+  checkEmail: (email: string) =>
+    apiClient.get<{ available: boolean }>('/api/v1/auth/check-email', { params: { email } }).then((r) => r.data),
+
   signup: (email: string, password: string, nickname: string) =>
     apiClient.post('/api/v1/auth/signup', { email, password, nickname }),
 
