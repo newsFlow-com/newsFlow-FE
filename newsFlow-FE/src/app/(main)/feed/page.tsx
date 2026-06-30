@@ -8,14 +8,27 @@ import { useRecommend } from '@/src/hooks/useRecommend'
 import { useArticles } from '@/src/hooks/useArticles'
 import { useAuthStore } from '@/src/store/authStore'
 
+const SENTIMENT_FILTERS = [
+  { label: '전체', value: undefined },
+  { label: '긍정', value: 'positive' },
+  { label: '부정', value: 'negative' },
+  { label: '중립', value: 'neutral' },
+] as const
+
 export default function FeedPage() {
   const userId = useAuthStore((s) => s.user?.id)
   const [page, setPage] = useState(0)
+  const [sentiment, setSentiment] = useState<string | undefined>(undefined)
 
   const { data: recommended, isLoading: recLoading } = useRecommend(10)
-  const { data: articles, isLoading: artLoading } = useArticles(page, 20)
+  const { data: articles, isLoading: artLoading } = useArticles(page, 20, sentiment)
 
   const recommendedIds = new Set(recommended?.articles.map((a) => a.articleId))
+
+  function handleSentimentChange(value: string | undefined) {
+    setSentiment(value)
+    setPage(0)
+  }
 
   return (
     <div className="space-y-8">
@@ -31,7 +44,25 @@ export default function FeedPage() {
       )}
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">전체 기사</h2>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <h2 className="text-lg font-semibold text-gray-900">전체 기사</h2>
+          <div className="ml-auto flex gap-1.5">
+            {SENTIMENT_FILTERS.map(({ label, value }) => (
+              <button
+                key={label}
+                onClick={() => handleSentimentChange(value)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  sentiment === value
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {artLoading || recLoading ? (
           <div className="flex justify-center py-12">
             <Spinner />

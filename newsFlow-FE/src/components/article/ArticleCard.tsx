@@ -50,6 +50,19 @@ export default function ArticleCard({ article, bookmarkId }: ArticleCardProps) {
                 {format(new Date(article.publishedAt), 'yyyy.MM.dd', { locale: ko })}
               </span>
             )}
+            {article.sentiment && (
+              <Badge
+                variant={
+                  article.sentiment === 'positive'
+                    ? 'green'
+                    : article.sentiment === 'negative'
+                    ? 'red'
+                    : 'default'
+                }
+              >
+                {article.sentiment === 'positive' ? '긍정' : article.sentiment === 'negative' ? '부정' : '중립'}
+              </Badge>
+            )}
             {article.score !== undefined && (
               <Badge variant="blue">점수 {article.score.toFixed(1)}</Badge>
             )}
