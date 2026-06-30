@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation'
 const navItems = [
   { href: '/feed', label: '추천 피드' },
   { href: '/highlight', label: '핵심 기사' },
+  { href: '/search', label: '검색' },
+  { href: '/subscriptions', label: '구독 관리' },
   { href: '/bookmarks', label: '북마크' },
   { href: '/settings', label: '설정' },
 ]
