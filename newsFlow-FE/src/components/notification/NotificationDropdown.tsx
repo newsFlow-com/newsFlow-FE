@@ -11,7 +11,7 @@ export default function NotificationDropdown() {
   const ref = useRef<HTMLDivElement>(null)
 
   const { data: count = 0 } = useUnreadCount()
-  const { data, isLoading } = useNotifications(0)
+  const { data, isLoading } = useNotifications()
   const markRead = useMarkRead()
   const markAllRead = useMarkAllRead()
 
@@ -65,10 +65,10 @@ export default function NotificationDropdown() {
               <div className="flex justify-center py-6">
                 <Spinner />
               </div>
-            ) : !data?.content.length ? (
+            ) : !data?.length ? (
               <p className="py-8 text-center text-sm text-gray-400">알림이 없습니다.</p>
             ) : (
-              data.content.map((n) => (
+              data.map((n) => (
                 <div
                   key={n.id}
                   onClick={() => {

@@ -3,10 +3,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { notificationsApi } from '@/src/lib/api/notifications'
 
-export function useNotifications(page = 0) {
+export function useNotifications(size = 20) {
   return useQuery({
-    queryKey: ['notifications', page],
-    queryFn: () => notificationsApi.list(page),
+    queryKey: ['notifications', size],
+    queryFn: () => notificationsApi.list(size),
   })
 }
 

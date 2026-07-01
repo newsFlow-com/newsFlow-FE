@@ -2,11 +2,9 @@ import { apiClient } from './client'
 import type { Notification } from '@/src/types'
 
 export const notificationsApi = {
-  list: (page = 0, size = 20) =>
+  list: (size = 20) =>
     apiClient
-      .get<{ content: Notification[]; totalElements: number }>('/api/v1/notifications', {
-        params: { page, size },
-      })
+      .get<Notification[]>('/api/v1/notifications', { params: { size } })
       .then((r) => r.data),
 
   unreadCount: () =>
