@@ -9,11 +9,14 @@ import { useAuthStore } from '@/src/store/authStore'
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const accessToken = useAuthStore((s) => s.accessToken)
+  const hasHydrated = useAuthStore((s) => s._hasHydrated)
 
   useEffect(() => {
+    if (!hasHydrated) return
     if (!accessToken) router.replace('/login')
-  }, [accessToken, router])
+  }, [hasHydrated, accessToken, router])
 
+  if (!hasHydrated) return null
   if (!accessToken) return null
 
   return (

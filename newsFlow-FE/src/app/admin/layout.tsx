@@ -9,15 +9,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter()
   const user = useAuthStore((s) => s.user)
   const accessToken = useAuthStore((s) => s.accessToken)
+  const hasHydrated = useAuthStore((s) => s._hasHydrated)
 
   useEffect(() => {
+    if (!hasHydrated) return
     if (!accessToken) {
       router.replace('/login')
     } else if (user && user.role !== 'ADMIN') {
       router.replace('/feed')
     }
-  }, [accessToken, user, router])
+  }, [hasHydrated, accessToken, user, router])
 
+  if (!hasHydrated) return null
   if (!accessToken || !user || user.role !== 'ADMIN') return null
 
   return (
