@@ -73,10 +73,9 @@ export interface LoginResponse {
   user: User
 }
 
-export interface PageResponse<T> {
+export interface CursorPage<T> {
   content: T[]
-  totalElements: number
-  totalPages: number
+  hasNext: boolean
+  nextCursor: string | null
   size: number
-  number: number
 }

@@ -17,17 +17,27 @@ const SENTIMENT_FILTERS = [
 
 export default function FeedPage() {
   const userId = useAuthStore((s) => s.user?.id)
-  const [page, setPage] = useState(0)
+  // 커서 기반 페이지네이션: 지금까지 이동한 커서를 스택으로 쌓아 "이전"을 지원한다
+  const [cursorStack, setCursorStack] = useState<(string | undefined)[]>([undefined])
   const [sentiment, setSentiment] = useState<string | undefined>(undefined)
+  const cursor = cursorStack[cursorStack.length - 1]
 
   const { data: recommended, isLoading: recLoading } = useRecommend(10)
-  const { data: articles, isLoading: artLoading } = useArticles(page, 20, sentiment)
+  const { data: articles, isLoading: artLoading } = useArticles(cursor, 20, sentiment)
 
-  const recommendedIds = new Set(recommended?.articles.map((a) => a.articleId))
+  const recommendedIds = new Set(recommended?.articles.map((a) => a.id))
 
   function handleSentimentChange(value: string | undefined) {
     setSentiment(value)
-    setPage(0)
+    setCursorStack([undefined])
+  }
+
+  function handlePrev() {
+    setCursorStack((s) => (s.length > 1 ? s.slice(0, -1) : s))
+  }
+
+  function handleNext() {
+    if (articles?.nextCursor) setCursorStack((s) => [...s, articles.nextCursor ?? undefined])
   }
 
   return (
@@ -37,7 +47,7 @@ export default function FeedPage() {
           <h2 className="mb-3 text-lg font-semibold text-gray-900">추천 기사</h2>
           <div className="space-y-3">
             {recommended.articles.map((article) => (
-              <ArticleCard key={article.articleId} article={article} />
+              <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         </section>
@@ -71,29 +81,27 @@ export default function FeedPage() {
           <>
             <div className="space-y-3">
               {articles?.content
-                .filter((a) => !recommendedIds.has(a.articleId))
+                .filter((a) => !recommendedIds.has(a.id))
                 .map((article) => (
-                  <ArticleCard key={article.articleId} article={article} />
+                  <ArticleCard key={article.id} article={article} />
                 ))}
             </div>
-            {articles && articles.totalPages > 1 && (
+            {articles && (cursorStack.length > 1 || articles.hasNext) && (
               <div className="mt-4 flex items-center justify-between">
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  disabled={page === 0}
+                  onClick={handlePrev}
+                  disabled={cursorStack.length <= 1}
                 >
                   이전
                 </Button>
-                <span className="text-sm text-gray-500">
-                  {page + 1} / {articles.totalPages}
-                </span>
+                <span className="text-sm text-gray-500">{cursorStack.length} 페이지</span>
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => setPage((p) => p + 1)}
-                  disabled={page >= articles.totalPages - 1}
+                  onClick={handleNext}
+                  disabled={!articles.hasNext}
                 >
                   다음
                 </Button>
