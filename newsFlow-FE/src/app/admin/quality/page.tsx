@@ -9,6 +9,8 @@ import Spinner from '@/src/components/ui/Spinner'
 import Button from '@/src/components/ui/Button'
 import Badge from '@/src/components/ui/Badge'
 
+const PAGE_SIZE = 20
+
 export default function QualityPage() {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(0)
@@ -16,7 +18,7 @@ export default function QualityPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['qualityLogs', page, filterCorrect],
-    queryFn: () => adminApi.qualityLogs({ page, size: 20, isCorrect: filterCorrect }),
+    queryFn: () => adminApi.qualityLogs({ page, size: PAGE_SIZE, isCorrect: filterCorrect }),
   })
 
   const review = useMutation({
@@ -55,7 +57,7 @@ export default function QualityPage() {
         <div className="flex justify-center py-12">
           <Spinner />
         </div>
-      ) : data?.content.length ? (
+      ) : data?.length ? (
         <>
           <div className="overflow-hidden rounded-xl border border-gray-200">
             <table className="w-full text-sm">
@@ -64,37 +66,37 @@ export default function QualityPage() {
                   <th className="px-4 py-3 text-left font-medium">기사 ID</th>
                   <th className="px-4 py-3 text-left font-medium">체크 유형</th>
                   <th className="px-4 py-3 text-left font-medium">상태</th>
-                  <th className="px-4 py-3 text-left font-medium">검토일</th>
+                  <th className="px-4 py-3 text-left font-medium">생성일</th>
                   <th className="px-4 py-3 text-left font-medium">액션</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {data.content.map((log: QualityLog) => (
-                  <tr key={log.logId} className="bg-white hover:bg-gray-50">
+                {data.map((log: QualityLog) => (
+                  <tr key={log.id} className="bg-white hover:bg-gray-50">
                     <td className="px-4 py-3 font-mono text-xs text-gray-500">
                       {log.articleId.slice(0, 8)}…
                     </td>
                     <td className="px-4 py-3 text-gray-700">{log.checkType}</td>
                     <td className="px-4 py-3">
-                      {log.isCorrect ? (
+                      {log.isCorrect === null ? (
+                        <Badge>미검토</Badge>
+                      ) : log.isCorrect ? (
                         <Badge variant="green">정상</Badge>
                       ) : (
                         <Badge variant="red">오류</Badge>
                       )}
                     </td>
                     <td className="px-4 py-3 text-gray-500">
-                      {log.reviewedAt
-                        ? format(new Date(log.reviewedAt), 'MM.dd HH:mm', { locale: ko })
-                        : '미검토'}
+                      {format(new Date(log.createdAt), 'MM.dd HH:mm', { locale: ko })}
                     </td>
                     <td className="px-4 py-3">
-                      {!log.reviewedAt && (
+                      {log.isCorrect === null && (
                         <div className="flex gap-2">
                           <Button
                             size="sm"
                             variant="secondary"
                             loading={review.isPending}
-                            onClick={() => review.mutate({ logId: log.logId, isCorrect: true })}
+                            onClick={() => review.mutate({ logId: log.id, isCorrect: true })}
                           >
                             승인
                           </Button>
@@ -102,7 +104,7 @@ export default function QualityPage() {
                             size="sm"
                             variant="danger"
                             loading={review.isPending}
-                            onClick={() => review.mutate({ logId: log.logId, isCorrect: false })}
+                            onClick={() => review.mutate({ logId: log.id, isCorrect: false })}
                           >
                             반려
                           </Button>
@@ -115,7 +117,7 @@ export default function QualityPage() {
             </table>
           </div>
 
-          {data.totalPages > 1 && (
+          {(page > 0 || data.length === PAGE_SIZE) && (
             <div className="flex items-center justify-between">
               <Button
                 variant="secondary"
@@ -125,14 +127,12 @@ export default function QualityPage() {
               >
                 이전
               </Button>
-              <span className="text-sm text-gray-500">
-                {page + 1} / {data.totalPages}
-              </span>
+              <span className="text-sm text-gray-500">{page + 1} 페이지</span>
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={() => setPage((p) => p + 1)}
-                disabled={page >= data.totalPages - 1}
+                disabled={data.length < PAGE_SIZE}
               >
                 다음
               </Button>

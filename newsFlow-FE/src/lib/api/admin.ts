@@ -1,20 +1,19 @@
 import { apiClient } from './client'
-import type { PageResponse } from '@/src/types'
 
 export interface QualityLog {
-  logId: string
+  id: string
   articleId: string
+  articleTitle: string
   checkType: string
-  isCorrect: boolean
-  reviewedAt: string | null
-  reviewedByAdminId: string | null
+  isCorrect: boolean | null
+  checkedBy: string | null
   createdAt: string
 }
 
 export const adminApi = {
   qualityLogs: (params?: { checkType?: string; isCorrect?: boolean; page?: number; size?: number }) =>
     apiClient
-      .get<PageResponse<QualityLog>>('/api/admin/v1/quality/logs', { params })
+      .get<QualityLog[]>('/api/admin/v1/quality/logs', { params })
       .then((r) => r.data),
 
   reviewQualityLog: (logId: string, isCorrect: boolean, correctionData?: Record<string, unknown>) =>
