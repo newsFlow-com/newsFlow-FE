@@ -61,6 +61,13 @@ export interface Category {
   slug: string
 }
 
+export interface UserCategory {
+  categoryId: string
+  slug: string
+  name: string
+  preferenceWeight: number
+}
+
 export interface AuthTokens {
   accessToken: string
   refreshToken: string

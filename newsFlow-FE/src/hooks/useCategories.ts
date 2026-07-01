@@ -17,10 +17,18 @@ export function useMyCategories() {
   })
 }
 
-export function useUpdateMyCategories() {
+export function useAddMyCategory() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (categoryIds: number[]) => categoriesApi.updateMyCategories(categoryIds),
+    mutationFn: (categorySlug: string) => categoriesApi.addMyCategory(categorySlug),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['myCategories'] }),
+  })
+}
+
+export function useRemoveMyCategory() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (categorySlug: string) => categoriesApi.removeMyCategory(categorySlug),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['myCategories'] }),
   })
 }

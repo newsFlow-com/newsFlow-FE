@@ -1,15 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Button from '@/src/components/ui/Button'
 import Input from '@/src/components/ui/Input'
-import Badge from '@/src/components/ui/Badge'
 import Spinner from '@/src/components/ui/Spinner'
 import { useChangePassword, useSendVerificationEmail } from '@/src/hooks/useAuth'
-import { useCategories, useMyCategories, useUpdateMyCategories } from '@/src/hooks/useCategories'
+import { useAddMyCategory, useCategories, useMyCategories, useRemoveMyCategory } from '@/src/hooks/useCategories'
 
 const passwordSchema = z
   .object({
@@ -29,14 +28,12 @@ export default function SettingsPage() {
   const sendEmail = useSendVerificationEmail()
   const { data: allCategories, isLoading: catLoading } = useCategories()
   const { data: myCategories } = useMyCategories()
-  const updateCategories = useUpdateMyCategories()
+  const addCategory = useAddMyCategory()
+  const removeCategory = useRemoveMyCategory()
 
-  const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [passwordSuccess, setPasswordSuccess] = useState(false)
 
-  useEffect(() => {
-    if (myCategories) setSelectedIds(myCategories.map((c) => c.id))
-  }, [myCategories])
+  const mySlugs = new Set(myCategories?.map((c) => c.slug))
 
   const {
     register,
@@ -57,12 +54,12 @@ export default function SettingsPage() {
     )
   }
 
-  function toggleCategory(id: number) {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]))
-  }
-
-  function saveCategories() {
-    updateCategories.mutate(selectedIds)
+  function toggleCategory(slug: string) {
+    if (mySlugs.has(slug)) {
+      removeCategory.mutate(slug)
+    } else {
+      addCategory.mutate(slug)
+    }
   }
 
   return (
@@ -124,32 +121,25 @@ export default function SettingsPage() {
         {catLoading ? (
           <Spinner />
         ) : (
-          <>
-            <div className="flex flex-wrap gap-2">
-              {allCategories?.map((cat) => {
-                const selected = selectedIds.includes(cat.id)
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => toggleCategory(cat.id)}
-                    className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
-                      selected
-                        ? 'border-blue-600 bg-blue-600 text-white'
-                        : 'border-gray-300 text-gray-600 hover:border-blue-400 hover:text-blue-600'
-                    }`}
-                  >
-                    {cat.name}
-                  </button>
-                )
-              })}
-            </div>
-            <Button onClick={saveCategories} loading={updateCategories.isPending}>
-              저장
-            </Button>
-            {updateCategories.isSuccess && (
-              <p className="text-sm text-green-600">관심 카테고리가 저장되었습니다.</p>
-            )}
-          </>
+          <div className="flex flex-wrap gap-2">
+            {allCategories?.map((cat) => {
+              const selected = mySlugs.has(cat.slug)
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => toggleCategory(cat.slug)}
+                  disabled={addCategory.isPending || removeCategory.isPending}
+                  className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
+                    selected
+                      ? 'border-blue-600 bg-blue-600 text-white'
+                      : 'border-gray-300 text-gray-600 hover:border-blue-400 hover:text-blue-600'
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              )
+            })}
+          </div>
         )}
       </section>
     </div>
