@@ -62,3 +62,18 @@ export function useChangePassword() {
 export function useSendVerificationEmail() {
   return useMutation({ mutationFn: authApi.sendVerificationEmail })
 }
+
+export function useRequestPasswordReset() {
+  return useMutation({
+    mutationFn: (email: string) => authApi.requestPasswordReset(email),
+  })
+}
+
+export function useConfirmPasswordReset() {
+  const router = useRouter()
+  return useMutation({
+    mutationFn: ({ token, newPassword }: { token: string; newPassword: string }) =>
+      authApi.confirmPasswordReset(token, newPassword),
+    onSuccess: () => router.push('/login?reset=success'),
+  })
+}
