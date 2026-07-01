@@ -51,7 +51,7 @@ export interface Notification {
   articleId: string | null
   articleTitle: string | null
   subscriptionValue: string | null
-  isRead: boolean
+  read: boolean
   sentAt: string
 }
 

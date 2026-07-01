@@ -72,17 +72,17 @@ export default function NotificationDropdown() {
                 <div
                   key={n.id}
                   onClick={() => {
-                    if (!n.isRead) markRead.mutate(n.id)
+                    if (!n.read) markRead.mutate(n.id)
                   }}
                   className={`cursor-pointer border-b border-gray-50 px-4 py-3 hover:bg-gray-50 ${
-                    n.isRead ? 'opacity-60' : ''
+                    n.read ? 'opacity-60' : ''
                   }`}
                 >
                   <div className="flex items-start gap-2">
-                    {!n.isRead && (
+                    {!n.read && (
                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
                     )}
-                    <div className={!n.isRead ? '' : 'pl-3.5'}>
+                    <div className={!n.read ? '' : 'pl-3.5'}>
                       {n.subscriptionValue && (
                         <p className="mb-0.5 text-xs font-medium text-blue-600">
                           #{n.subscriptionValue}
