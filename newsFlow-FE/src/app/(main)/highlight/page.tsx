@@ -55,7 +55,7 @@ export default function HighlightPage() {
       ) : articles?.length ? (
         <div className="space-y-3">
           {articles.map((article) => (
-            <ArticleCard key={article.articleId} article={article} />
+            <ArticleCard key={article.id} article={article} />
           ))}
         </div>
       ) : (

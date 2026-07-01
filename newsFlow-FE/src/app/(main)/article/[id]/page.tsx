@@ -21,7 +21,7 @@ export default function ArticlePage() {
     setSummaryLoading(true)
     try {
       const { data } = await aiClient.post<{ article_id: string; summary: string }>('/summarize', {
-        article_id: article.articleId,
+        article_id: article.id,
       })
       setSummary(data.summary)
     } finally {

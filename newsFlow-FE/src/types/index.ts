@@ -8,7 +8,7 @@ export interface User {
 }
 
 export interface Article {
-  articleId: string
+  id: string
   title: string
   summary: string | null
   originalUrl: string
