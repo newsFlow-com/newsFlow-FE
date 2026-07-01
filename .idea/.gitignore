@@ -8,3 +8,5 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+# 로컬 JS 라이브러리 매핑 (환경별로 달라짐)
+/jsLibraryMappings.xml
