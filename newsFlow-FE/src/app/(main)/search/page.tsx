@@ -127,9 +127,9 @@ export default function SearchPage() {
           {categories?.map((c) => (
             <button
               key={c.id}
-              onClick={() => { setCategory(c.code); setPage(0) }}
+              onClick={() => { setCategory(c.slug); setPage(0) }}
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                category === c.code
+                category === c.slug
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}

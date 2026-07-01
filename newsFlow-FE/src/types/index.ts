@@ -56,9 +56,9 @@ export interface Notification {
 }
 
 export interface Category {
-  id: number
+  id: string
   name: string
-  code: string
+  slug: string
 }
 
 export interface AuthTokens {

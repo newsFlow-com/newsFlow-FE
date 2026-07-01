@@ -116,11 +116,11 @@ export default function SubscriptionsPage() {
         ) : (
           <div className="flex flex-wrap gap-2">
             {categories?.map((cat) => {
-              const subscribed = subscribedCategories.has(cat.code)
+              const subscribed = subscribedCategories.has(cat.slug)
               return (
                 <button
                   key={cat.id}
-                  onClick={() => toggleCategory(cat.code)}
+                  onClick={() => toggleCategory(cat.slug)}
                   disabled={addSub.isPending || removeSub.isPending}
                   className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
                     subscribed
