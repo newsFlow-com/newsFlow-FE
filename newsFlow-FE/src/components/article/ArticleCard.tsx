@@ -11,24 +11,21 @@ import { useAddBookmark, useRemoveBookmark } from '@/src/hooks/useBookmarks'
 
 interface ArticleCardProps {
   article: Article
-  bookmarkId?: string
+  initiallyBookmarked?: boolean
 }
 
-export default function ArticleCard({ article, bookmarkId }: ArticleCardProps) {
-  const [bookmarked, setBookmarked] = useState(!!bookmarkId)
-  const [activeBookmarkId, setActiveBookmarkId] = useState(bookmarkId)
+export default function ArticleCard({ article, initiallyBookmarked }: ArticleCardProps) {
+  const [bookmarked, setBookmarked] = useState(!!initiallyBookmarked)
   const addBookmark = useAddBookmark()
   const removeBookmark = useRemoveBookmark()
 
   async function toggleBookmark() {
-    if (bookmarked && activeBookmarkId) {
-      await removeBookmark.mutateAsync(activeBookmarkId)
+    if (bookmarked) {
+      await removeBookmark.mutateAsync(article.id)
       setBookmarked(false)
-      setActiveBookmarkId(undefined)
     } else {
-      const bm = await addBookmark.mutateAsync(article.articleId)
+      await addBookmark.mutateAsync(article.id)
       setBookmarked(true)
-      setActiveBookmarkId(bm.bookmarkId)
     }
   }
 
@@ -36,7 +33,7 @@ export default function ArticleCard({ article, bookmarkId }: ArticleCardProps) {
     <article className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <Link href={`/article/${article.articleId}`} className="block">
+          <Link href={`/article/${article.id}`} className="block">
             <h2 className="mb-1 line-clamp-2 text-base font-semibold text-gray-900 hover:text-blue-600">
               {article.title}
             </h2>

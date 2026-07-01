@@ -61,12 +61,6 @@ export interface Category {
   code: string
 }
 
-export interface Bookmark {
-  bookmarkId: string
-  article: Article
-  createdAt: string
-}
-
 export interface AuthTokens {
   accessToken: string
   refreshToken: string

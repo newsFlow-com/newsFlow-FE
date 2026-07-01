@@ -3,10 +3,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { bookmarkApi } from '@/src/lib/api/bookmark'
 
-export function useBookmarks(page = 0, size = 20) {
+export function useBookmarks(size = 50) {
   return useQuery({
-    queryKey: ['bookmarks', page, size],
-    queryFn: () => bookmarkApi.list(page, size),
+    queryKey: ['bookmarks', size],
+    queryFn: () => bookmarkApi.list(size),
   })
 }
 
@@ -21,7 +21,7 @@ export function useAddBookmark() {
 export function useRemoveBookmark() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (bookmarkId: string) => bookmarkApi.remove(bookmarkId),
+    mutationFn: (articleId: string) => bookmarkApi.remove(articleId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['bookmarks'] }),
   })
 }
